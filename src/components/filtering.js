@@ -35,6 +35,27 @@ export function initFiltering(elements, indexes) {
         }
 
         // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => compare(row, state));
+        // Копируем state в target и формируем поле total как массив [from, to]
+        const target = {...state};
+        const rawFrom = state && state.totalFrom;
+        const rawTo = state && state.totalTo;
+
+        const from = rawFrom === undefined || rawFrom === '' ? undefined : Number(rawFrom);
+        const to = rawTo === undefined || rawTo === '' ? undefined : Number(rawTo);
+
+        // Если оба не числа — не добавляем фильтр по total
+        if ((from !== undefined && !Number.isNaN(from)) || (to !== undefined && !Number.isNaN(to))) {
+            let a = Number.isFinite(from) ? from : undefined;
+            let b = Number.isFinite(to) ? to : undefined;
+
+            // Если пользователь по ошибке ввёл from > to — поменяем
+            if (a !== undefined && b !== undefined && a > b) {
+                const tmp = a; a = b; b = tmp;
+            }
+
+            target.total = [a, b];
+        }
+
+        return data.filter(row => compare(row, target));
     }
 }

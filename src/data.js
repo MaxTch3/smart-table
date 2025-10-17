@@ -8,7 +8,7 @@ export function initData(sourceData) {
         date: item.date,
         seller: sellers[item.seller_id],
         customer: customers[item.customer_id],
-        total: item.total_amount
+        total: Number(item.total_amount)
     }));
     return {sellers, customers, data};
 }
